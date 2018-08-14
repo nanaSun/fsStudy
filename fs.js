@@ -25,12 +25,49 @@ let path=require('path')
  * 写入文件
  */
 //Buffer.from({data:1}.toString())
+// console.log(Buffer.from({data:1}.toString()));
 // fs.writeFile(path.join(__dirname,"1.txt"),'{data:1}',function(err){
 //     console.log(err)
 // })
 // fs.appendFile(path.join(__dirname,"1.txt"),'{data:1}',function(err){
 //     console.log(err)
 // })
+// let BUFFER_SIZE=5
+// let readPos=0
+// let writePos=0
+// fs.open(path.join(__dirname,"1.txt"),"r",(err,rfd)=>{
+//     let buf=Buffer.from("aaaaaaaa")
+//     // buf 读取的位置
+//     //6 读取多少
+//     //0 从那个位置写入文件
+//     fs.open(path.join(__dirname,"2.txt"),"w",(err,wfd)=>{
+//         function next(){
+//             let buf=Buffer.alloc(BUFFER_SIZE)
+//             // buf 读取的位置
+//             //6 读取多少
+//             //0 从那个位置写入文件
+//             fs.read(rfd,buf,0,BUFFER_SIZE,readPos,(err,byteRead)=>{
+//                 console.log(byteRead)
+//                 if(byteRead>0){
+//                     readPos += byteRead
+//                     fs.write(wfd,buf,0,byteRead,writePos,(err,byteRead)=>{
+//                         console.log("success")
+//                         writePos += byteRead
+//                         next()
+//                     })
+//                 }else{  
+//                     fs.fsync(wfd,()=>{
+//                         fs.close(rfd,()=>{
+
+//                         })
+//                     })
+//                 }
+//             })
+//         }
+//         next()
+//     })
+// })
+
 /**
  * 复制文件
  */
@@ -53,6 +90,37 @@ let path=require('path')
 /**
  * 创建目录
  */
+//makeDirectory("a/a/f/c/s","")
+function makeDirectory(makePaths,dir){
+    let paths=makePaths.split("/")
+    let newPaths=[];
+    createDir()
+    function createDir(){
+        if(paths.length<=0) return;
+        newPaths.push(paths.shift())
+        let file=__dirname+"//"+newPaths.join("//")
+        fs.access(file, fs.constants.F_OK | fs.constants.W_OK, (err) => {
+            if (err) {
+                if(err.code === 'ENOENT'){
+                    fs.mkdir(file,()=>{
+                        createDir()
+                    })
+                    console.log(`${file}`);
+                }
+                
+            } else {
+                console.log(`${file} exists, and it is writable`);
+                createDir()
+            }
+        });
+    }
+   
+}
+fs.readdir(__dirname+"/a/a/f/c/",(err,files)=>{
+    fs.readdir(__dirname+"/a/a/f/c/"+files[0],(err,files)=>{
+        console.log(files)
+    })
+})
 /**
  * 删除目录
  */
