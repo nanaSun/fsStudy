@@ -21,8 +21,7 @@
 |操作|同步|异步|
 |:--:|:--:|:---:|
 |查询|accessSync|access|
-|新建|readFileSync|mkdir|
-|复制|readFileSync|readFile|
+|新建|mkdirSync|mkdir|
 |删除|rmdirSync|rmdir|
 
 文件
@@ -30,9 +29,15 @@
 |:--:|:--:|:---:|
 |打开|openSync|open|
 |查看|readSync|read|
+|查看|readFileSync|readFile|
 |写入|writeSync|write|
-|新建|readSync|readSync|
-|复制|readFileSync|readFile|
+|写入|writeFileSync|writeFile|
+|追加写入|appendFileSync|appendFile|
+|复制|copyFileSync|copyFile|
 |删除|unlinkSync|unlink|
+
+其他方法
+
+是目录还是文件：fs.stat
 
 这些操作都有异步和同步的方法
