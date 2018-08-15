@@ -116,46 +116,52 @@ function makeDirectory(makePaths,dir){
     }
    
 }
-fs.readdir(__dirname+"/a/a/f/c/",(err,files)=>{
-    fs.readdir(__dirname+"/a/a/f/c/"+files[0],(err,files)=>{
-        console.log(files)
-    })
-})
+// fs.readdir(__dirname+"a/a/f/c/",(err,files)=>{
+//     fs.readdir(__dirname+"a/a/f/c/"+files[0],(err,files)=>{
+//         console.log(files)
+//     })
+// })
 /**
  * 删除目录
  */
 
-function getDirectory(){
+function removeDirectory(){
     let currentPath=__dirname+"/a";
     let arr=[]
     function nextPath(currentPath){
         return new Promise((resolve,reject)=>
             fs.readdir(currentPath,(err,paths)=>{
-                paths=paths.map((f)=>{
-                    return path.join(currentPath,f)
-                })
-                if(paths.length===0){
-                    arr.push(currentPath)
-                    fs.rmdir(currentPath,(err)=>{
-                        if(err){
-                            reject()
-                        }else{
-                            resolve()
-                        }
+                if(typeof paths!="undefined"){
+                    paths=paths.map((f)=>{
+                        return path.join(currentPath,f)
                     })
-                }else{
-                    Promise.all(paths.map((p)=>nextPath(p))).then((r)=>{
+                    if(paths.length===0){
                         arr.push(currentPath)
-                        fs.rmdir(currentPath,(err)=>{
-                            if(err){
-                                reject()
-                            }else{
-                                resolve()
-                            }
+                        resolve()
+                        // fs.rmdir(currentPath,(err)=>{
+                        //     if(err){
+                        //         reject()
+                        //     }else{
+                        //         resolve()
+                        //     }
+                        // })
+                    }else{
+                        Promise.all(paths.map((p)=>nextPath(p))).then((r)=>{
+                            arr.push(currentPath)
+                            resolve()
+                            // fs.rmdir(currentPath,(err)=>{
+                            //     if(err){
+                            //         reject()
+                            //     }else{
+                            //         resolve()
+                            //     }
+                            // })
+                        }).catch(e=>{
+                            reject();
                         })
-                    }).catch(e=>{
-                        reject();
-                    })
+                    }
+                }else{
+
                 }
             })
         )
@@ -164,4 +170,13 @@ function getDirectory(){
         console.log(arr.toString())
     })
 }
-getDirectory()
+removeDirectory()
+fs.stat(path.join(__dirname,"/a/"),function(err,data){
+    console.log(data.isBlockDevice())
+    console.log(data.isCharacterDevice())
+    console.log(data.isDirectory())
+    console.log(data.isFIFO())
+    console.log(data.isFile())
+    console.log(data.isSocket())
+    console.log(data.isSymbolicLink())
+})
